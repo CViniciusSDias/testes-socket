@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cliente</title>
+</head>
+<body>
+<output></output>
+<input type="text" />
+<script>
+    const ws = new WebSocket('ws://172.17.0.2:8080/teste');
+    const input = document.querySelector('input');
+    const output = document.querySelector('output');
+
+    ws.addEventListener('open', console.info);
+    ws.addEventListener('message', console.log);
+    ws.addEventListener('message', message => {
+        const data = JSON.parse(message.data);
+
+        if (data.type === 'chat') {
+            output.append(`${data.text} -`, document.createElement('br'));
+        } else {
+            alert(data);
+        }
+    });
+
+    input.addEventListener('keypress', e => {
+        if (e.code !== 'Enter') {
+            return;
+        }
+
+        output.append(`- ${input.value}`, document.createElement('br'));
+        ws.send(input.value);
+        input.value = '';
+    });
+</script>
+</body>
+</html>
